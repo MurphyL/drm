@@ -17,7 +17,7 @@ abstract class DynamicScript extends Script {
      */
     def include(String path) {
         inject('load', { it.eval(new File(path)) })
-        log.info("Included script file - {}", path)
+        log.info("脚本载入完成 - {}", path)
     }
 
     /**
@@ -39,9 +39,13 @@ abstract class DynamicScript extends Script {
         register('get', url, closure)
     }
 
+    def set(String name, String val) {
+        this[name] = val
+    }
+
     /**
      * 注册请求
-     * @param method
+     * @param method - TODO
      * @param url
      * @param closure
      */
