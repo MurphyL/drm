@@ -12,14 +12,13 @@ class DynamicRuntimeTest extends GroovyTestCase {
     void testCreate() {
         DynamicRuntime runtime = new DynamicRuntime()
         runtime.eval('''
-            def inst = app {
+            app {
                 port = 100
             }
             get "/hello", { 
                 println("test, hello") 
             }
-            include("D:/a.groovy")
-            println(inst.port)
+            include("/home/murph/Source/test/a.groovy")
         ''')
     }
 

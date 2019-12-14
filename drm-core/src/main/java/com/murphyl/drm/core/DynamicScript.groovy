@@ -10,28 +10,51 @@ import groovy.util.logging.Slf4j
 @Slf4j
 abstract class DynamicScript extends Script {
 
-    private Application instance
-
-    private DynamicRuntime runtime
-
+    /**
+     * 嵌入 - 文件
+     * @param path
+     * @return
+     */
     def include(String path) {
-        if (null == runtime) {
-            this.runtime = binding.getVariable("runtime")
-        }
-        instance = new Application()
-        instance.name = "include: ${path}"
-        runtime.shell.evaluate(new File(path))
+        inject('load', { it.eval(new File(path)) })
         log.info("Included script file - {}", path)
     }
 
-    Application app(Closure closure) {
-        instance = new Application()
-        instance.with(closure)
-        return instance
+    /**
+     * 初始化 - App
+     * @param closure
+     * @return
+     */
+    def app(Closure closure) {
+        inject('app', closure)
     }
 
+    /**
+     * GET - 请求
+     * @param url
+     * @param closure
+     * @return
+     */
     def get(String url, Closure closure) {
-        instance.get(url, closure)
+        register('get', url, closure)
     }
 
+    /**
+     * 注册请求
+     * @param method
+     * @param url
+     * @param closure
+     */
+    void register(String method, url, Closure closure) {
+        inject('app', { it.invokeMethod(method, [url, closure]) })
+    }
+
+    /**
+     * 注入
+     * @param key
+     * @param closure
+     */
+    void inject(String key, Closure closure) {
+        binding.getVariable(key).with(closure)
+    }
 }
