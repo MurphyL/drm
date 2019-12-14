@@ -18,6 +18,13 @@ class Application {
         register("GET", url, closure)
     }
 
+    /**
+     * TODO 请求重复载入的问题
+     * @param method
+     * @param url
+     * @param closure
+     * @return
+     */
     def register(String method, url, Closure closure){
         log.info("注册请求 - ${method.toUpperCase()} ${url} ${closure.toString()}")
     }

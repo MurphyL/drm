@@ -12,6 +12,7 @@ abstract class DynamicScript extends Script {
 
     /**
      * 嵌入 - 文件
+     * TODO - 脚本重复载入的问题
      * @param path
      * @return
      */
@@ -36,11 +37,7 @@ abstract class DynamicScript extends Script {
      * @return
      */
     def get(String url, Closure closure) {
-        register('get', url, closure)
-    }
-
-    def set(String name, String val) {
-        this[name] = val
+        request('get', url, closure)
     }
 
     /**
@@ -49,7 +46,7 @@ abstract class DynamicScript extends Script {
      * @param url
      * @param closure
      */
-    void register(String method, url, Closure closure) {
+    void request(String method, url, Closure closure) {
         inject('app', { it.invokeMethod(method, [url, closure]) })
     }
 

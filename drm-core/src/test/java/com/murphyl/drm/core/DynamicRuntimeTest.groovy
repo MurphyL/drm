@@ -19,6 +19,8 @@ class DynamicRuntimeTest extends GroovyTestCase {
                 println("test, hello") 
             }
             include("/home/murph/Source/test/a.groovy")
+            include("/home/murph/Source/test/a.groovy")
+            include("/home/murph/Source/test/a.groovy")
         ''')
     }
 
