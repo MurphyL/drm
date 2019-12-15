@@ -11,17 +11,25 @@ import groovy.util.logging.Slf4j
 @Slf4j
 abstract class DynamicScript extends Script {
 
+    private Closure setting = {
+        log.info('使用默认配置启动服务')
+    }
+
+    private Closure require = {
+        log.info('无特定依赖模块')
+    }
+
     /**
      * 初始化 - App
      * @param closure
      * @return
      */
-    def app(String type = 'web', Closure initClosure, logicClosure = {}) {
+    def createApp(String type = 'web', Closure initClosure = setting, requireClosure = require) {
         def appInstance = Applications.valueOf(type).create()
         appInstance.with(false, initClosure)
-        appInstance.afterPropertiesSet()
-        appInstance.with(false, logicClosure)
+        appInstance.afterInitialized()
         binding.setVariable("app", appInstance)
+        appInstance.with(false, requireClosure)
     }
 
 }

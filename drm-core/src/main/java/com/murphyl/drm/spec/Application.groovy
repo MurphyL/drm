@@ -11,7 +11,7 @@ import groovy.util.logging.Slf4j
 @Slf4j
 abstract class Application {
 
-    void afterPropertiesSet() {
+    void afterInitialized() {
         log.info("${name} - 应用初始化完成")
     }
 

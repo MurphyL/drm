@@ -1,6 +1,7 @@
 package com.murphyl.drm.core
 
 import groovy.test.GroovyTestCase
+import org.junit.Before
 
 /**
  * 运行时测试
@@ -9,15 +10,36 @@ import groovy.test.GroovyTestCase
  */
 class DynamicRuntimeTest extends GroovyTestCase {
 
-    void testWebApplication() {
-        DynamicRuntime runtime = new DynamicRuntime()
+    DynamicRuntime runtime
+
+    void before() {
+        runtime = new DynamicRuntime()
+    }
+
+    void testEmpty(){
+        before()
+        runtime.eval('createApp()')
+    }
+
+    void testWeb(){
+        before()
+        runtime.eval('createApp("web")')
+    }
+
+    void testInit(){
+        before()
+        runtime.eval('createApp("web", {})')
+    }
+
+    void testFull() {
+        before()
         runtime.eval('''
-            app('web', {
+            createApp('web', {
                 port = 100
                 name = '测试Web应用'
                 path = '/test'
             }, {
-                get '/join', {}
+                println('加载外部依赖')
             })
             include("/home/murph/Source/test/a.groovy")
             include("/home/murph/Source/test/a.groovy")
