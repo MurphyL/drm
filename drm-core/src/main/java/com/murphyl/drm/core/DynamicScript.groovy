@@ -1,5 +1,6 @@
 package com.murphyl.drm.core
 
+import com.murphyl.drm.utils.Applications
 import groovy.util.logging.Slf4j
 
 /**
@@ -11,51 +12,16 @@ import groovy.util.logging.Slf4j
 abstract class DynamicScript extends Script {
 
     /**
-     * 嵌入 - 文件
-     * TODO - 脚本重复载入的问题
-     * @param path
-     * @return
-     */
-    def include(String path) {
-        inject('load', { it.eval(new File(path)) })
-        log.info("脚本载入完成 - {}", path)
-    }
-
-    /**
      * 初始化 - App
      * @param closure
      * @return
      */
-    def app(Closure closure) {
-        inject('app', closure)
+    def app(String type = 'web', Closure initClosure, logicClosure = {}) {
+        def appInstance = Applications.valueOf(type).create()
+        appInstance.with(false, initClosure)
+        appInstance.afterPropertiesSet()
+        appInstance.with(false, logicClosure)
+        binding.setVariable("app", appInstance)
     }
 
-    /**
-     * GET - 请求
-     * @param url
-     * @param closure
-     * @return
-     */
-    def get(String url, Closure closure) {
-        request('get', url, closure)
-    }
-
-    /**
-     * 注册请求
-     * @param method - TODO
-     * @param url
-     * @param closure
-     */
-    void request(String method, url, Closure closure) {
-        inject('app', { it.invokeMethod(method, [url, closure]) })
-    }
-
-    /**
-     * 注入
-     * @param key
-     * @param closure
-     */
-    void inject(String key, Closure closure) {
-        binding.getVariable(key).with(closure)
-    }
 }

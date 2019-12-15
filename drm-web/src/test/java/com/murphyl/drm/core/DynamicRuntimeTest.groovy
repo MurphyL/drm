@@ -9,16 +9,16 @@ import groovy.test.GroovyTestCase
  */
 class DynamicRuntimeTest extends GroovyTestCase {
 
-    void testCreate() {
+    void testWebApplication() {
         DynamicRuntime runtime = new DynamicRuntime()
         runtime.eval('''
-            app {
+            app('web', {
                 port = 100
-            }
-            get "/hello", { 
-                println("test, hello") 
-            }
-            include("/home/murph/Source/test/a.groovy")
+                name = '测试Web应用'
+                path = '/test'
+            }, {
+                get '/join', {}
+            })
             include("/home/murph/Source/test/a.groovy")
             include("/home/murph/Source/test/a.groovy")
         ''')

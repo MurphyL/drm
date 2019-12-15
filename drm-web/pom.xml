@@ -7,9 +7,22 @@
         <groupId>com.murphyl.drm</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
+
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>drm-spec</artifactId>
+    <artifactId>drm-web</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.murphyl.drm</groupId>
+            <artifactId>drm-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-test</artifactId>
+        </dependency>
+    </dependencies>
 
 
 </project>
