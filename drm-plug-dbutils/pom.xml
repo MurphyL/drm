@@ -9,13 +9,15 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>drm-core</artifactId>
+    <artifactId>drm-plug-db</artifactId>
+
 
     <dependencies>
         <dependency>
             <groupId>com.murphyl.drm</groupId>
             <artifactId>drm-base</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
