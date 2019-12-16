@@ -47,11 +47,14 @@ class WebShellTest extends GroovyTestCase {
         runtime.eval('''
             createApp('web', {
                 port = 100
-                name = '测试Web应用'
+                name = '测试管理系统'
             })
-            require('demo')
+            require('demo', {
+                id = 'demo1'
+            })
             include("D:/a.groovy")
             include("D:/a.groovy")
+            println(app.help())
         ''')
     }
 }

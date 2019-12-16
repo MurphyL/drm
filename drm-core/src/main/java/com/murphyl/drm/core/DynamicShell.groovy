@@ -1,5 +1,6 @@
 package com.murphyl.drm.core
 
+import com.murphyl.drm.spec.DynamicApplication
 import groovy.util.logging.Slf4j
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.customizers.ImportCustomizer
@@ -35,11 +36,11 @@ final class DynamicShell {
      * 嵌入脚本的逻辑
      */
     def include = (String path) -> {
+        Objects.requireNonNull(shell.getVariable('app'), '请首先执行createApp()')
         log.info("正在准备脚本 - ${path}")
         Path target = Paths.get(path).normalize()
         if (includeItems.contains(target.toString())) {
-            log.warn("重复加载脚本 - ${path}（文件绝对路径：${target.toString()}）")
-            log.info("放弃加载脚本 - ${path}")
+            log.warn("重复加载脚本 - ${path}（文件绝对路径：${target}），放弃操作！")
             return false
         }
         eval(target.toFile())

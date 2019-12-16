@@ -1,6 +1,6 @@
 package com.murphyl.drm.support
 
-import com.murphyl.drm.plugin.DynamicPlugIn
+import com.murphyl.drm.plugin.DynamicPlugin
 import com.murphyl.drm.spec.DynamicApplication
 import groovy.util.logging.Slf4j
 
@@ -21,7 +21,7 @@ final class DrmRuntime {
         return Class.forName(target).newInstance()
     }
 
-    static DynamicPlugIn createPlugIn(String type) {
+    static DynamicPlugin createPlugIn(String type) {
         def target = config.getProperty("plug_${type}")
         return Class.forName(target).newInstance()
     }

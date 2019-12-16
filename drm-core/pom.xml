@@ -17,6 +17,10 @@
             <artifactId>drm-base</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-templates</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
