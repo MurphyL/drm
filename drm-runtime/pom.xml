@@ -7,27 +7,15 @@
         <groupId>com.murphyl.drm</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>drm-web</artifactId>
+    <artifactId>drm-runtime</artifactId>
 
     <dependencies>
         <dependency>
-            <groupId>com.murphyl.drm</groupId>
-            <artifactId>drm-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-web</artifactId>
-            <version>3.8.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-test</artifactId>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4-runtime</artifactId>
         </dependency>
     </dependencies>
-
 
 </project>

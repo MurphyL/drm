@@ -5,13 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.murphyl.drm</groupId>
-    <artifactId>drm-kt</artifactId>
+    <artifactId>drm</artifactId>
     <version>1.0-SNAPSHOT</version>
     <modules>
+        <module>drm-base</module>
         <module>drm-core</module>
         <module>drm-spec-web</module>
         <module>drm-plug-dbutils</module>
-        <module>drm-base</module>
+        <module>drm-runtime</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -32,6 +33,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr4-runtime</artifactId>
+                <version>4.7.2</version>
+            </dependency>
             <dependency>
                 <groupId>org.codehaus.groovy</groupId>
                 <artifactId>groovy</artifactId>
