@@ -12,7 +12,6 @@
         <module>drm-core</module>
         <module>drm-spec-web</module>
         <module>drm-plug-dbutils</module>
-        <module>drm-runtime</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -33,11 +32,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.antlr</groupId>
-                <artifactId>antlr4-runtime</artifactId>
-                <version>4.7.2</version>
-            </dependency>
             <dependency>
                 <groupId>org.codehaus.groovy</groupId>
                 <artifactId>groovy</artifactId>
