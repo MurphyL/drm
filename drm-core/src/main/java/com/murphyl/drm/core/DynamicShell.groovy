@@ -1,6 +1,5 @@
 package com.murphyl.drm.core
 
-import com.murphyl.drm.spec.DynamicApplication
 import groovy.util.logging.Slf4j
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.customizers.ImportCustomizer
@@ -25,7 +24,7 @@ final class DynamicShell {
     DynamicShell() {
         def config = new CompilerConfiguration()
         config.setSourceEncoding(defaultCharset)
-        config.setScriptBaseClass(DynamicFacade.class.name)
+        config.setScriptBaseClass(DrmApplication.class.name)
         def icz = new ImportCustomizer()
         config.addCompilationCustomizers(icz)
         def binding = new Binding(["include": include])

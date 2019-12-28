@@ -35,24 +35,14 @@ interface DynamicObject {
      */
     final String sign = "${type}（${this.class.simpleName}）"
 
-    default Logger getLogger() {
-        return this['log']
+    default String desc() {
+        return "${name}（${id}）"
     }
 
-    default String desc() {
-        return "${type}（${this.class.simpleName}#${id} - ${name}）"
-    }
-    /**
-     * 自检
-     */
-    default void selfCheck() {}
     /**
      * 初始化完成
      */
     default void afterInitialized() {
-        this.selfCheck()
-        logger.info("${desc()} - 初始化完成！")
-        logger.debug("${desc()}将在下文被识别为：${id}")
     }
 
     default def help() {

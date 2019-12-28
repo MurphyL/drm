@@ -1,7 +1,7 @@
 package com.murphyl.drm.support
 
 import com.murphyl.drm.plugin.DynamicPlugin
-import com.murphyl.drm.spec.DynamicApplication
+import com.murphyl.drm.spec.DrmSpec
 import groovy.util.logging.Slf4j
 
 @Slf4j
@@ -16,7 +16,7 @@ final class DrmRuntime {
         }
     }
 
-    static DynamicApplication createApp(String type) {
+    static DrmSpec createSpec(String type) {
         def target = config.getProperty("spec_${type}")
         return Class.forName(target).newInstance()
     }

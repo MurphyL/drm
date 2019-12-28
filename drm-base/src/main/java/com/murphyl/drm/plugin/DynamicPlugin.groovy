@@ -15,8 +15,4 @@ abstract class DynamicPlugin implements DynamicObject {
 
     final String type = '插件'
 
-    default void selfCheck() {
-        Objects.requireNonNull(id, "必须指定${desc()}的id")
-    }
-
 }

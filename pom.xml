@@ -9,9 +9,8 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>drm-core</module>
-        <module>drm-spec-web</module>
-        <module>drm-plug-dbutils</module>
         <module>drm-base</module>
+        <module>drm-spec-web</module>
     </modules>
     <packaging>pom</packaging>
 

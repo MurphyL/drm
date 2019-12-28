@@ -5,11 +5,11 @@ import groovy.util.logging.Slf4j
 import io.vertx.core.http.HttpMethod
 
 @Slf4j
-class WebApplication extends DynamicApplication {
+class WebSpec extends DrmSpec {
 
     int port = 8080
 
-    String name = 'WebApplication'
+    String name = 'Web服务'
 
     private Set<String> rules = new HashSet<>()
 
@@ -59,4 +59,8 @@ class WebApplication extends DynamicApplication {
         log.debug("注册请求完成 - ${validMethod} ${path} ${closure.toString()}")
     }
 
+    @Override
+    void ready() {
+
+    }
 }
