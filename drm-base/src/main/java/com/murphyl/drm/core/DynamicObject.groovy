@@ -11,9 +11,18 @@ interface DynamicObject {
 
     String getId()
 
+    String getKind()
+
     String getType()
 
     String getName()
+
+    /**
+     * 是否为孤儿框架，全局只能注册一次
+     */
+    default boolean getOrphan() {
+        return false
+    }
 
     default def help() {
         def document = new StringJoiner('\n')

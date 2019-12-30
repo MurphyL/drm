@@ -12,9 +12,11 @@ class CommonSpecific extends DynamicSpecific implements OrphanSpecific {
 
     String id = 'common'
 
+    final String kind = 'common'
+
     final String name = '通用'
 
-    final boolean orphan = true
+    boolean orphan = true
 
     @Override
     void run() {

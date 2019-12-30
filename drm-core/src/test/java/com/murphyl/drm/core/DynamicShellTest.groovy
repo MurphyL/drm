@@ -24,13 +24,13 @@ class DynamicShellTest extends GroovyTestCase {
 
     void testEmpty() {
         before()
-        runtime.eval('createApp()')
+        runtime.eval('app()')
     }
 
     void testDemo() {
         before()
         runtime.eval('''
-            createApp({
+            app({
                 name = 'demo'
             })
         ''')
@@ -39,7 +39,7 @@ class DynamicShellTest extends GroovyTestCase {
     void testDemo2() {
         before()
         runtime.eval('''
-            createApp({
+            app({
                 println('hello')
             })
         ''')
@@ -48,7 +48,7 @@ class DynamicShellTest extends GroovyTestCase {
     void testSpec() {
         before()
         runtime.eval('''
-            createApp()
+            app()
             use({
                 id = 'local'
             })
@@ -60,10 +60,9 @@ class DynamicShellTest extends GroovyTestCase {
     void testPlugIn() {
         before()
         runtime.eval('''
-            createApp()
+            app()
             use({
                 id = 'local'
-                
                 require('xx')
             })
             ready()

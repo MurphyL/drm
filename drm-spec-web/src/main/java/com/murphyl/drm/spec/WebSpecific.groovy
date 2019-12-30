@@ -11,7 +11,9 @@ class WebSpecific extends DynamicSpecific {
 
     int port = 8080
 
-    String name = 'Web服务'
+    final String kind = 'web'
+
+    final String name = 'Web服务'
 
     private Set<String> rules = new HashSet<>()
 

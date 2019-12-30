@@ -1,5 +1,6 @@
 package com.murphyl.drm.core
 
+import com.murphyl.drm.plug.DynamicPlugin
 import com.murphyl.drm.spec.DynamicSpecific
 import groovy.util.logging.Slf4j
 
@@ -21,42 +22,55 @@ abstract class DrmRuntime extends Script {
 
     final String id = 'app'
 
-    private Set<String> loadSpecIds
+    private Set<String> loadedDynamicIds
 
     private Set<String> loadedSpecType
+
+    private Set<String> loadedPlugType
 
     private final static Properties SPEC_RULES = new Properties()
 
     static {
-        def rules = URLClassLoader.getSystemResources("drm_spec.properties")
-        rules.each { SPEC_RULES.load(it.openStream()) }
+        def specRules = URLClassLoader.getSystemResources("drm_spec.properties")
+        specRules.each { SPEC_RULES.load(it.openStream()) }
+        def plugRules = URLClassLoader.getSystemResources("drm_spec.properties")
+        plugRules.each { SPEC_RULES.load(it.openStream()) }
     }
 
-    def createApp(Closure initClosure = {}) {
-        this.loadSpecIds = new HashSet<>()
+    def app(Closure initClosure = {}) {
+        this.loadedDynamicIds = new HashSet<>()
         this.loadedSpecType = new HashSet<>()
         binding.setVariable(id, this)
         log.info("应用容器初始化完成，上下文中识别为：${id}")
     }
 
-    def use(String specType = 'common', Closure closure) {
-        def targetClass = SPEC_RULES.getProperty(specType)
-        DynamicSpecific spec = Class.forName(targetClass).newInstance()
-        if (spec.orphan && loadedSpecType.contains(specType)) {
-            throw new IllegalStateException("${specType}${spec.type}只能注册一次")
+    def use(String useType = 'common', Closure closure) {
+        // 获取类型
+        def targetClass = SPEC_RULES.getProperty(useType)
+        // 构造
+        DynamicObject dynamic = Class.forName(targetClass).newInstance()
+        // 验证孤儿组件
+        if (dynamic.orphan && loadedSpecType.contains(useType)) {
+            throw new IllegalStateException("${useType}${dynamic.type}只能注册一次")
         }
-        spec.with(closure)
-        String specId = spec.id
-        if (keywords.contains(specId)) {
-            throw new IllegalArgumentException("不能使用保留字（${specId}）作为动态对象的ID")
+        // 初始化
+        dynamic.with(closure)
+        // 验证关键字不能被使用
+        if (keywords.contains(dynamic.id)) {
+            throw new IllegalArgumentException("不能使用保留字（${dynamic.id}）作为动态对象的ID")
         }
-        if (loadSpecIds.contains(specId)) {
-            throw new IllegalArgumentException("动态对象的ID（${specId}）必须全局唯一")
+        // 验证全局标记唯一
+        if (loadedDynamicIds.contains(dynamic.id)) {
+            throw new IllegalArgumentException("动态对象的ID（${dynamic.id}）必须全局唯一")
         }
-        binding.setVariable(specId, spec)
-        this.loadSpecIds.add(specId)
-        this.loadedSpecType.add(specType)
-        log.info("${spec.name}${spec.type}初始化完成，上下文中识别为：${specId}")
+        // 分类型初始化
+        if (dynamic instanceof DynamicSpecific) {
+            useSpec(dynamic)
+        } else if (dynamic instanceof DynamicPlugin) {
+            usePlug(dynamic)
+        }
+        this.loadedDynamicIds.add(dynamic.id)
+        log.info("${dynamic.name}${dynamic.type}初始化完成，上下文中识别为：${dynamic.id}")
     }
 
     def ready() {
@@ -67,11 +81,21 @@ abstract class DrmRuntime extends Script {
         }
         LinkedBlockingDeque queue = new LinkedBlockingDeque()
         ThreadPoolExecutor executor = new ThreadPoolExecutor(5, 15, 2, TimeUnit.MINUTES, queue, factory)
-        if (loadSpecIds.isEmpty()) {
+        if (loadedDynamicIds.isEmpty()) {
             use('common', { log.warn('使用默认配置运行服务') })
         }
-        loadSpecIds.each { executor.submit(binding.getVariable(it)) }
+        loadedDynamicIds.each { executor.submit(binding.getVariable(it)) }
         log.info("容器（id=${id}）准备就绪")
+    }
+
+    private void useSpec(DynamicSpecific spec) {
+        loadedSpecType.add(spec.kind)
+        binding.setVariable(spec.id, spec)
+    }
+
+    private void usePlug(DynamicPlugin spec) {
+        loadedPlugType.add(spec.kind)
+        binding.setVariable(spec.id, spec)
     }
 
 }

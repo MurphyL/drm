@@ -13,10 +13,6 @@ import groovy.util.logging.Slf4j
 abstract class DynamicSpecific implements DynamicObject, Runnable {
 
     final String type = '框架'
-    /**
-     * 是否为孤儿框架，全局只能注册一次
-     */
-    boolean orphan = false
 
     Map<String, String> plugins;
 
