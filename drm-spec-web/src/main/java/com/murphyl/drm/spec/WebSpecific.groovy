@@ -7,6 +7,8 @@ import io.vertx.core.http.HttpMethod
 @Slf4j
 class WebSpecific extends DrmSpecific {
 
+    String id
+
     int port = 8080
 
     String name = 'Web服务'
@@ -36,6 +38,7 @@ class WebSpecific extends DrmSpecific {
         register(HttpMethod.PATCH, url, closure)
     }
 
+    @Override
     void run() {
 
     }
@@ -59,8 +62,4 @@ class WebSpecific extends DrmSpecific {
         log.debug("注册请求完成 - ${validMethod} ${path} ${closure.toString()}")
     }
 
-    @Override
-    void ready() {
-
-    }
 }

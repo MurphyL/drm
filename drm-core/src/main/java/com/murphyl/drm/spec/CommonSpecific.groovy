@@ -7,13 +7,17 @@ import groovy.util.logging.Slf4j
  * @author murph*
  * @date 2019/9/17 9:30
  */
- @Slf4j
-class CliSpecific extends DrmSpecific {
+@Slf4j
+class CommonSpecific extends DrmSpecific implements OrphanSpecific {
 
-    String name = 'CLI'
+    String id = 'common'
+
+    final String name = '通用'
+
+    final boolean orphan = true
 
     @Override
-    void ready() {
+    void run() {
         log.info("命令行框架启动 - ${id}")
     }
 }

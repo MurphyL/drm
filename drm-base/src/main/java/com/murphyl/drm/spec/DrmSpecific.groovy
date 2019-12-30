@@ -1,6 +1,7 @@
 package com.murphyl.drm.spec
 
-import com.murphyl.drm.DynamicObject
+
+import com.murphyl.drm.core.DynamicObject
 import groovy.util.logging.Slf4j
 
 /**
@@ -9,15 +10,19 @@ import groovy.util.logging.Slf4j
  * @date 2019/9/17 9:30
  */
 @Slf4j
-abstract class DrmSpecific implements DynamicObject {
-
-    String id
+abstract class DrmSpecific implements DynamicObject, Runnable {
 
     final String type = '框架'
-
     /**
-     * 服务框架就绪
+     * 是否为孤儿框架，全局只能注册一次
      */
-    abstract void ready()
+    boolean orphan = false
+    /**
+     * 全局标识
+     * @return
+     */
+    abstract String getId()
+
+    abstract String getName()
 
 }
