@@ -9,7 +9,7 @@ import groovy.util.logging.Slf4j
  * @date 2019/9/17 9:30
  */
 @Slf4j
-abstract class DrmSpec implements DynamicObject {
+abstract class DrmSpecific implements DynamicObject {
 
     String id
 

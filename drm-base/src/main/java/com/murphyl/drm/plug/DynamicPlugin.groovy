@@ -1,4 +1,4 @@
-package com.murphyl.drm.plugin
+package com.murphyl.drm.plug
 
 import com.murphyl.drm.DynamicObject
 import groovy.util.logging.Slf4j

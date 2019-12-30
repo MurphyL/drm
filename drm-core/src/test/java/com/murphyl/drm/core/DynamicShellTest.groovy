@@ -43,6 +43,9 @@ class DynamicShellTest extends GroovyTestCase {
             require('cli', {
                 id = 'xxx'
             })
+            require('cli', {
+                id = 'zzz'
+            })
             ready()
         ''')
     }

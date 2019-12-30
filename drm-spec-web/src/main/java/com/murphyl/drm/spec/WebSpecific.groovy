@@ -5,7 +5,7 @@ import groovy.util.logging.Slf4j
 import io.vertx.core.http.HttpMethod
 
 @Slf4j
-class WebSpec extends DrmSpec {
+class WebSpecific extends DrmSpecific {
 
     int port = 8080
 
