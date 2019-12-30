@@ -8,7 +8,7 @@ import groovy.util.logging.Slf4j
  * @date 2019/9/17 9:30
  */
 @Slf4j
-class CommonSpecific extends DrmSpecific implements OrphanSpecific {
+class CommonSpecific extends DynamicSpecific implements OrphanSpecific {
 
     String id = 'common'
 

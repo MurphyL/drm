@@ -1,6 +1,8 @@
 package com.murphyl.drm.core
 
 import groovy.test.GroovyTestCase
+import org.junit.After
+import org.junit.Before
 
 /**
  *
@@ -11,8 +13,13 @@ class DynamicShellTest extends GroovyTestCase {
 
     DynamicShell runtime
 
+    @Before
     void before() {
         runtime = new DynamicShell()
+    }
+
+    void after() {
+        Thread.currentThread().join(3000)
     }
 
     void testEmpty() {
@@ -38,16 +45,30 @@ class DynamicShellTest extends GroovyTestCase {
         ''')
     }
 
-    void testPluginInit() {
+    void testSpec() {
         before()
         runtime.eval('''
             createApp()
-            require({
+            use({
                 id = 'local'
             })
             ready()
         ''')
-        Thread.currentThread().join(3000)
+        after()
+    }
+
+    void testPlugIn() {
+        before()
+        runtime.eval('''
+            createApp()
+            use({
+                id = 'local'
+                
+                require('xx')
+            })
+            ready()
+        ''')
+        after()
     }
 
 }

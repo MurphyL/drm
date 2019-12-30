@@ -12,8 +12,6 @@ import groovy.util.logging.Slf4j
 @Slf4j
 abstract class DynamicPlugin implements DynamicObject {
 
-    String id
-
     final String type = '插件'
 
 }

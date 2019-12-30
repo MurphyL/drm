@@ -5,7 +5,7 @@ import groovy.util.logging.Slf4j
 import io.vertx.core.http.HttpMethod
 
 @Slf4j
-class WebSpecific extends DrmSpecific {
+class WebSpecific extends DynamicSpecific {
 
     String id
 

@@ -3,11 +3,17 @@ package com.murphyl.drm.core
 import com.murphyl.drm.support.DrmDocument
 
 /**
- *
+ * 动态对象
  * @author murph*
  * @date 2019/9/17 9:30
  */
-trait DynamicObject {
+interface DynamicObject {
+
+    String getId()
+
+    String getType()
+
+    String getName()
 
     default def help() {
         def document = new StringJoiner('\n')
