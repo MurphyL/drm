@@ -52,4 +52,19 @@ class WebShellTest extends GroovyTestCase {
             include("D:/a.groovy")
         ''')
     }
+
+    void testInstance() {
+        before()
+        runtime.eval('''
+            app('web', {
+                name = '测试管理系统'
+            })
+            app.with({
+                get('/hello', {
+                    print('hello')
+                })
+            })
+            ready()
+        ''')
+    }
 }

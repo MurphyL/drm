@@ -2,16 +2,22 @@ package com.murphyl.drm.spec
 
 import com.murphyl.drm.support.DrmDocument
 import groovy.util.logging.Slf4j
+import io.vertx.core.Vertx
+import io.vertx.core.VertxOptions
 import io.vertx.core.http.HttpMethod
+import io.vertx.core.http.HttpServer
+import io.vertx.ext.web.Router
+import lombok.Setter
 
 @Slf4j
 class WebSpecific extends DynamicSpecific {
 
-    String id = 'web'
-
-    int port = 8080
+    @Setter
+    private int port = 8080
 
     final String kind = 'web'
+
+    String id = kind
 
     final String name = 'Web服务'
 
@@ -19,22 +25,35 @@ class WebSpecific extends DynamicSpecific {
 
     private String urlTemplate = '%s'
 
+    private Vertx vertx
+
+    private Router router
+
+    WebSpecific() {
+        vertx = Vertx.vertx()
+        router = Router.router(vertx)
+    }
+
     @DrmDocument(usage = 'get(String url, Closure handler)', desc = "接收GET请求，参数可选")
     def get(String url = '', Closure closure = {}) {
         register(HttpMethod.GET, url, closure)
     }
+
     @DrmDocument(usage = 'post(String url, Closure handler)', desc = "接收POST请求，参数可选")
     def post(String url = '', Closure closure = {}) {
         register(HttpMethod.POST, url, closure)
     }
+
     @DrmDocument(usage = 'put(String url, Closure handler)', desc = "接收PUT请求，参数可选")
     def put(String url = '', Closure closure = {}) {
         register(HttpMethod.PUT, url, closure)
     }
+
     @DrmDocument(usage = 'delete(String url, Closure handler)', desc = "接收DELETE请求，参数可选")
     def delete(String url = '', Closure closure = {}) {
         register(HttpMethod.DELETE, url, closure)
     }
+
     @DrmDocument(usage = 'patch(String url, Closure handler)', desc = "接收PATCH请求，参数可选")
     def patch(String url = '', Closure closure = {}) {
         register(HttpMethod.PATCH, url, closure)
@@ -42,7 +61,10 @@ class WebSpecific extends DynamicSpecific {
 
     @Override
     void run() {
-
+        HttpServer server = vertx.createHttpServer()
+        server.requestHandler(router).listen(port)
+        log.info("服务已启动：${port}")
+        Thread.currentThread().join()
     }
 
     /**
@@ -60,8 +82,11 @@ class WebSpecific extends DynamicSpecific {
         if (rules.contains(unique)) {
             log.warn("重复注册请求 - ${unique}，将覆盖原有规则")
         }
-        rules.add(unique)
-        log.debug("注册请求完成 - ${validMethod} ${path} ${closure.toString()}")
+        router.route(method, target).handler((routingContext) -> {
+            def response = routingContext.response()
+            response.write("hello, ").end()
+        })
+        log.debug("注册请求完成 - ${validMethod} ${path}")
     }
 
 }
