@@ -49,7 +49,7 @@ class DynamicShellTest extends GroovyTestCase {
         before()
         runtime.eval('''
             app()
-            use({
+            spec({
                 id = 'local'
             })
             ready()
@@ -61,11 +61,19 @@ class DynamicShellTest extends GroovyTestCase {
         before()
         runtime.eval('''
             app()
-            use({
+            use('cli', {
                 id = 'local'
-                require('xx')
+            })
+            use('jdbc', {
+                id = 'mysql'
             })
             ready()
+            local.exec({
+                mysql.read('select 1')
+                mysql.write('select 1')
+                mysql.read('select 1')
+                mysql.write('select 1')
+            })
         ''')
         after()
     }

@@ -14,15 +14,6 @@ abstract class DynamicSpecific implements DynamicObject, Runnable {
 
     final String type = '框架'
 
-    Map<String, String> plugins;
-
-    DynamicSpecific() {
-        plugins = new HashMap<>()
-    }
-
-    def require(String plugId) {
-        plugins[plugId] = plugId
-        log.info(id + ' - 加载了插件：' + plugId)
-    }
+    boolean ready = false
 
 }

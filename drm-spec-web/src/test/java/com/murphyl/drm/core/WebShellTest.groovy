@@ -17,26 +17,26 @@ class WebShellTest extends GroovyTestCase {
 
     void testEmpty(){
         before()
-        runtime.eval('createApp()')
+        runtime.eval('app()')
     }
 
     void testWeb(){
         before()
-        runtime.eval('createApp("web")')
+        runtime.eval('app("web")')
     }
 
     void testInit(){
         before()
-        runtime.eval('createApp("web", {})')
+        runtime.eval('''
+            app({})
+            ready()
+        ''')
     }
 
     void testInclude() {
         before()
         runtime.eval('''
-            createApp('web', {
-                port = 100
-                name = '测试Web应用'
-            })
+            app()
             include("D:/a.groovy")
             include("D:/a.groovy")
         ''')
@@ -45,16 +45,11 @@ class WebShellTest extends GroovyTestCase {
     void testPlugin() {
         before()
         runtime.eval('''
-            createApp('web', {
-                port = 100
+            app('web', {
                 name = '测试管理系统'
             })
-            require('demo', {
-                id = 'demo1'
-            })
             include("D:/a.groovy")
             include("D:/a.groovy")
-            println(app.help())
         ''')
     }
 }

@@ -1,14 +1,9 @@
 package com.murphyl.drm.core
 
+import com.google.common.collect.HashBasedTable
 import com.murphyl.drm.plug.DynamicPlugin
 import com.murphyl.drm.spec.DynamicSpecific
 import groovy.util.logging.Slf4j
-
-import java.util.concurrent.LinkedBlockingDeque
-import java.util.concurrent.ThreadFactory
-import java.util.concurrent.ThreadPoolExecutor
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * 应用 - 容器
@@ -20,37 +15,42 @@ abstract class DrmRuntime extends Script {
 
     private final String[] keywords = ['drm', 'spec', 'app']
 
-    final String id = 'app'
+    private final static String DEFAULT_SPEC_TYPE = 'cli'
+    private final static Closure DEFAULT_SPEC_INIT = {
+        log.info('使用默认配置初始化主框架')
+    }
 
-    private Set<String> loadedDynamicIds
+    private Map<String, DynamicPlugin> dynamicPlug;
+    private HashBasedTable<String, String, Object> dynamicItems;
 
-    private Set<String> loadedSpecType
-
-    private Set<String> loadedPlugType
-
-    private final static Properties SPEC_RULES = new Properties()
+    private final static Properties DRM_RULES = new Properties()
 
     static {
-        def specRules = URLClassLoader.getSystemResources("drm_spec.properties")
-        specRules.each { SPEC_RULES.load(it.openStream()) }
-        def plugRules = URLClassLoader.getSystemResources("drm_spec.properties")
-        plugRules.each { SPEC_RULES.load(it.openStream()) }
+        def rules = URLClassLoader.getSystemResources("drm.properties")
+        rules.each { DRM_RULES.load(it.openStream()) }
     }
 
-    def app(Closure initClosure = {}) {
-        this.loadedDynamicIds = new HashSet<>()
-        this.loadedSpecType = new HashSet<>()
-        binding.setVariable(id, this)
-        log.info("应用容器初始化完成，上下文中识别为：${id}")
+    def app(Closure closure = DEFAULT_SPEC_INIT) {
+        app(DEFAULT_SPEC_TYPE, closure)
     }
 
-    def use(String useType = 'common', Closure closure) {
+    def app(String defaultSpec, Closure initClosure = DEFAULT_SPEC_INIT) {
+        log.info("使用${defaultSpec}框架初始化容器")
+        this.dynamicPlug = new Hashtable<>()
+        this.dynamicItems = HashBasedTable.create()
+        def app = use(defaultSpec, initClosure)
+        binding.setVariable('app', app)
+        binding.setVariable('ready', true)
+        log.info("应用容器初始化完成，主框架：app、${app.id}")
+    }
+
+    def use(String useType, Closure closure) {
         // 获取类型
-        def targetClass = SPEC_RULES.getProperty(useType)
+        def targetClass = DRM_RULES.getProperty(useType)
         // 构造
         DynamicObject dynamic = Class.forName(targetClass).newInstance()
         // 验证孤儿组件
-        if (dynamic.orphan && loadedSpecType.contains(useType)) {
+        if (dynamic.orphan && dynamicItems.column(dynamic.kind)) {
             throw new IllegalStateException("${useType}${dynamic.type}只能注册一次")
         }
         // 初始化
@@ -60,7 +60,7 @@ abstract class DrmRuntime extends Script {
             throw new IllegalArgumentException("不能使用保留字（${dynamic.id}）作为动态对象的ID")
         }
         // 验证全局标记唯一
-        if (loadedDynamicIds.contains(dynamic.id)) {
+        if (dynamicItems.containsColumn(dynamic.id)) {
             throw new IllegalArgumentException("动态对象的ID（${dynamic.id}）必须全局唯一")
         }
         // 分类型初始化
@@ -69,33 +69,31 @@ abstract class DrmRuntime extends Script {
         } else if (dynamic instanceof DynamicPlugin) {
             usePlug(dynamic)
         }
-        this.loadedDynamicIds.add(dynamic.id)
         log.info("${dynamic.name}${dynamic.type}初始化完成，上下文中识别为：${dynamic.id}")
+        return dynamic
     }
 
     def ready() {
-        ThreadGroup group = new ThreadGroup("specific")
-        AtomicInteger counter = new AtomicInteger(0)
-        ThreadFactory factory = (Runnable specInstance) -> {
-            return new Thread(group, specInstance, "specific-${counter.incrementAndGet()}")
+        Map<String, Object> specItems = dynamicItems.row('spec')
+        def plugins = dynamicPlug
+        specItems.each {
+            DynamicSpecific spec = binding.getProperty(it.value)
+            plugins.each((plug) -> {
+                spec.metaClass[plug.key] = plug.value
+            })
+            spec.run()
         }
-        LinkedBlockingDeque queue = new LinkedBlockingDeque()
-        ThreadPoolExecutor executor = new ThreadPoolExecutor(5, 15, 2, TimeUnit.MINUTES, queue, factory)
-        if (loadedDynamicIds.isEmpty()) {
-            use('common', { log.warn('使用默认配置运行服务') })
-        }
-        loadedDynamicIds.each { executor.submit(binding.getVariable(it)) }
-        log.info("容器（id=${id}）准备就绪")
+        log.info("容器准备就绪")
     }
 
     private void useSpec(DynamicSpecific spec) {
-        loadedSpecType.add(spec.kind)
+        dynamicItems.put('spec', spec.kind, spec.id)
         binding.setVariable(spec.id, spec)
     }
 
-    private void usePlug(DynamicPlugin spec) {
-        loadedPlugType.add(spec.kind)
-        binding.setVariable(spec.id, spec)
+    private void usePlug(DynamicPlugin plug) {
+        dynamicItems.put('plug', plug.kind, plug.id)
+        dynamicPlug.put(plug.id, plug)
     }
 
 }

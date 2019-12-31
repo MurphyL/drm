@@ -35,7 +35,7 @@ final class DynamicShell {
      * 嵌入脚本的逻辑
      */
     def include = (String path) -> {
-        Objects.requireNonNull(shell.getVariable('app'), '请首先执行createApp()')
+        Objects.requireNonNull(shell.getVariable('ready'), '请首先执行createApp()')
         log.info("正在准备脚本 - ${path}")
         Path target = Paths.get(path).normalize()
         if (includeItems.contains(target.toString())) {

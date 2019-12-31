@@ -7,7 +7,7 @@ import io.vertx.core.http.HttpMethod
 @Slf4j
 class WebSpecific extends DynamicSpecific {
 
-    String id
+    String id = 'web'
 
     int port = 8080
 
