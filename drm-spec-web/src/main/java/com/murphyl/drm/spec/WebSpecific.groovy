@@ -1,12 +1,10 @@
 package com.murphyl.drm.spec
 
+import com.murphyl.drm.core.DrmServer
 import com.murphyl.drm.support.DrmDocument
 import groovy.util.logging.Slf4j
 import io.vertx.core.Vertx
-import io.vertx.core.VertxOptions
 import io.vertx.core.http.HttpMethod
-import io.vertx.core.http.HttpServer
-import io.vertx.ext.web.Router
 import lombok.Setter
 
 @Slf4j
@@ -25,13 +23,10 @@ class WebSpecific extends DynamicSpecific {
 
     private String urlTemplate = '%s'
 
-    private Vertx vertx
-
-    private Router router
-
     WebSpecific() {
-        vertx = Vertx.vertx()
-        router = Router.router(vertx)
+        def vertx = Vertx.vertx()
+        def instance = new DrmServer(port)
+        vertx.deployVerticle(instance)
     }
 
     @DrmDocument(usage = 'get(String url, Closure handler)', desc = "接收GET请求，参数可选")
@@ -61,9 +56,6 @@ class WebSpecific extends DynamicSpecific {
 
     @Override
     void run() {
-        HttpServer server = vertx.createHttpServer()
-        server.requestHandler(router).listen(port)
-        log.info("服务已启动：${port}")
         Thread.currentThread().join()
     }
 
@@ -84,7 +76,7 @@ class WebSpecific extends DynamicSpecific {
         }
         router.route(method, target).handler((routingContext) -> {
             def response = routingContext.response()
-            response.write("hello, ").end()
+            response.end('hi')
         })
         log.debug("注册请求完成 - ${validMethod} ${path}")
     }

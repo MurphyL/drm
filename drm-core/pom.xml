@@ -18,8 +18,8 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-templates</artifactId>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-core</artifactId>
         </dependency>
     </dependencies>
 
