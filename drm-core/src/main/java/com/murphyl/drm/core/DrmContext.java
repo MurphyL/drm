@@ -1,5 +1,6 @@
 package com.murphyl.drm.core;
 
+import com.murphyl.drm.utils.ConfigUtils;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
@@ -7,9 +8,6 @@ import io.vertx.core.VertxOptions;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Enumeration;
 import java.util.Properties;
 
 /**
@@ -21,7 +19,15 @@ import java.util.Properties;
 @Slf4j
 public final class DrmContext extends AbstractVerticle {
 
-    private final static Properties SPEC_RULE = new Properties();
+    public void ready(){
+        vertx.deployVerticle("com.murphyl.drm.core.DrmContext", res -> {
+            if (res.succeeded()) {
+                log.info("上下文（{}）初始化完成！", res.result());
+            } else {
+                log.info("上下文初始化失败：{}", res.cause());
+            }
+        });
+    }
 
     public static final void from() {
         VertxOptions options = new VertxOptions().setWorkerPoolSize(40);
@@ -36,14 +42,11 @@ public final class DrmContext extends AbstractVerticle {
     }
 
     private void deployDynamicItems(Vertx instance) throws IOException {
-        Enumeration<URL> rules = URLClassLoader.getSystemResources("drm.properties");
-        while (rules.hasMoreElements()) {
-            SPEC_RULE.load(rules.nextElement().openStream());
-        }
+        Properties items = ConfigUtils.loadClasspathProperties("act.properties");
         DeploymentOptions options = new DeploymentOptions().setWorker(true).setWorkerPoolName("drm");
-        for (String key : SPEC_RULE.stringPropertyNames()) {
-            instance.deployVerticle(SPEC_RULE.getProperty(key), options);
-            log.info("{}（{}）已加载完成", key, SPEC_RULE.getProperty(key));
+        for (String key : items.stringPropertyNames()) {
+            instance.deployVerticle(items.getProperty(key), options);
+            log.info("加载{}（{}）完成", key, items.getProperty(key));
         }
     }
 
